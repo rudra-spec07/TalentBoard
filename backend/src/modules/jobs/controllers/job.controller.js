@@ -1,6 +1,23 @@
 import jobService from '../services/job.service.js';
+import jobSearchService from '../services/job.search.service.js';
 
 class JobController {
+  /**
+   * Read-optimized search engine for public jobs
+   */
+  async searchJobs(req, res, next) {
+    try {
+      const result = await jobSearchService.searchJobs(req.query);
+      res.status(200).json({
+        success: true,
+        message: 'Search completed successfully',
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * Post a new Job Listing (defaults to Draft)
    */

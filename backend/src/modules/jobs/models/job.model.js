@@ -133,10 +133,12 @@ const jobSchema = new mongoose.Schema(
 );
 
 // Compound indexes and Text indexes for performance optimization
-jobSchema.index({ status: 1, isDeleted: 1 });
+jobSchema.index({ status: 1, isDeleted: 1, applicationDeadline: 1 });
 jobSchema.index({ postedBy: 1, isDeleted: 1 });
 jobSchema.index({ title: 'text', companyName: 'text', description: 'text' });
 jobSchema.index({ skillsRequired: 1 });
+jobSchema.index({ location: 1 });
+jobSchema.index({ salaryMin: 1, salaryMax: 1 });
 
 const Job = mongoose.model('Job', jobSchema);
 

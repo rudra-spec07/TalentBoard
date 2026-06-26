@@ -122,6 +122,26 @@ export const toAdminJobDTO = (job) => {
 };
 
 /**
+ * Shapes job document for optimized public search feeds.
+ */
+export const toSearchJobSummaryDTO = (job) => {
+  if (!job) return null;
+  return {
+    id: (job._id || job.id).toString(),
+    title: job.title,
+    companyName: job.companyName,
+    companyLogo: job.companyLogo || null,
+    location: job.location,
+    salaryMin: job.salaryMin ?? null,
+    salaryMax: job.salaryMax ?? null,
+    currency: job.currency || 'USD',
+    experienceLevel: job.experienceLevel,
+    jobType: job.jobType,
+    createdAt: job.createdAt
+  };
+};
+
+/**
  * Wraps list DTO items with pagination attributes.
  */
 export const toPaginatedJobListDTO = (items, totalCount, page, limit, mapper = toJobSummaryDTO) => {

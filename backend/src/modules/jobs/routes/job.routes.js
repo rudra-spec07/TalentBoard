@@ -8,7 +8,8 @@ import verifyJobOwnership from '../middleware/ownership.middleware.js';
 import { 
   createJobSchema, 
   updateJobSchema, 
-  reopenJobSchema 
+  reopenJobSchema,
+  searchJobSchema
 } from '../validators/job.validation.js';
 
 const router = express.Router();
@@ -35,6 +36,9 @@ router.get('/my', authenticate, authorize('employer', 'admin'), jobController.ge
 // Admin moderation feeds (registered before /:id to prevent clashes)
 router.get('/admin', authenticate, authorize('admin'), jobController.adminGetJobs);
 router.delete('/admin/:id', authenticate, authorize('admin'), jobController.adminDeleteJob);
+
+// Public search engine (registered before /:id to prevent clashes)
+router.get('/search', validate(searchJobSchema), jobController.searchJobs);
 
 // Public listings search and detailed view
 router.get('/', optionalAuthenticate, jobController.getJobs);

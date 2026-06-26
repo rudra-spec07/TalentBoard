@@ -164,6 +164,26 @@ class JobMongoRepository extends IJobRepository {
   }
 
   /**
+   * Read-optimized search for jobs returning lean results with projection
+   */
+  async searchJobs(filters, options = {}) {
+    const { skip = 0, limit = 10, sort = { createdAt: -1 } } = options;
+    return await Job.find(filters)
+      .select('title companyName companyLogo location salaryMin salaryMax currency experienceLevel jobType createdAt')
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+  }
+
+  /**
+   * Count documents matching filters for pagination totalItems
+   */
+  async countJobs(filters) {
+    return await Job.countDocuments(filters);
+  }
+
+  /**
    * Checks if a job exists by ID
    */
   async exists(id) {

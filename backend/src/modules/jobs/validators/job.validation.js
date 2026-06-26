@@ -147,13 +147,40 @@ export const reopenJobSchema = z
 // Search listing validation
 export const searchJobSchema = z
   .object({
-    keyword: z.string().optional(),
-    location: z.string().optional(),
+    keyword: z.string().optional().default(''),
+    location: z.string().optional().default(''),
     jobType: z.enum(Object.values(JOB_TYPE)).optional(),
     experienceLevel: z.enum(Object.values(EXPERIENCE_LEVEL)).optional(),
-    salaryMin: z.preprocess((val) => Number(val), z.number().min(0)).optional(),
-    skills: z.string().optional(), // Comma-separated list for search
-    page: z.preprocess((val) => Number(val) || 1, z.number().min(1)).optional(),
-    limit: z.preprocess((val) => Number(val) || 10, z.number().min(1).max(100)).optional()
+    salaryMin: z.preprocess(
+      (val) => (val === undefined || val === '' ? undefined : Number(val)),
+      z.number().min(0, 'Salary floor cannot be negative').optional()
+    ),
+    salaryMax: z.preprocess(
+      (val) => (val === undefined || val === '' ? undefined : Number(val)),
+      z.number().min(0, 'Salary cap cannot be negative').optional()
+    ),
+    skills: z.string().optional().default(''),
+    page: z.preprocess(
+      (val) => (val === undefined || val === '' ? 1 : Number(val)),
+      z.number().int().min(1, 'Page index must be >= 1').default(1)
+    ),
+    limit: z.preprocess(
+      (val) => (val === undefined || val === '' ? 10 : Number(val)),
+      z.number().int().min(1).max(100, 'Limit cannot exceed 100').default(10)
+    ),
+    sortBy: z.enum(['createdAt', 'salary', 'title', 'companyName']).optional().default('createdAt'),
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) => {
+      if (data.salaryMin !== undefined && data.salaryMax !== undefined) {
+        return data.salaryMax >= data.salaryMin;
+      }
+      return true;
+    },
+    {
+      message: 'salaryMax must be greater than or equal to salaryMin',
+      path: ['salaryMax']
+    }
+  );

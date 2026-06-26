@@ -43,6 +43,14 @@ class IJobRepository {
     throw new Error('Method not implemented');
   }
 
+  async searchJobs(filters, options) {
+    throw new Error('Method not implemented');
+  }
+
+  async countJobs(filters) {
+    throw new Error('Method not implemented');
+  }
+
   async exists(id) {
     throw new Error('Method not implemented');
   }

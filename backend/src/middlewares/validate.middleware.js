@@ -2,7 +2,11 @@ import { BadRequestError } from '../utils/errors.js';
 
 const validate = (schema) => (req, res, next) => {
   try {
-    req.body = schema.parse(req.body);
+    if (req.method === 'GET') {
+      req.query = schema.parse(req.query);
+    } else {
+      req.body = schema.parse(req.body);
+    }
     next();
   } catch (error) {
     if (error.name === 'ZodError') {
