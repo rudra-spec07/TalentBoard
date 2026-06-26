@@ -10,6 +10,9 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 
+// Jobs module routes
+import { getJobRoutes } from './features/jobs';
+
 function App() {
   return (
     <AuthProvider>
@@ -29,6 +32,9 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
+
+          {/* Jobs Module Routes (Seeker public + Protected Employer) */}
+          {getJobRoutes()}
 
           {/* Catch-all fallback redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />

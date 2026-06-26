@@ -8,7 +8,7 @@ export const DashboardPage = () => {
     switch (user?.role) {
       case 'job_seeker':
         return (
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">My Application Portal</h3>
               <p className="text-sm text-slate-400 mb-6">
@@ -20,6 +20,22 @@ export const DashboardPage = () => {
                 <span className="text-[10px] text-slate-600 block mt-1">Maximum file size: 5MB</span>
               </div>
             </div>
+            
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-4">Explore Opportunities</h3>
+                <p className="text-sm text-slate-400 mb-6">
+                  Browse and search matching job roles verified by AI and screening models.
+                </p>
+              </div>
+              <Link 
+                to="/jobs" 
+                className="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 text-center transition-all block"
+              >
+                Browse Job Board
+              </Link>
+            </div>
+
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">My Applications History</h3>
               <p className="text-sm text-slate-400 mb-6">Track matching score outcomes and suggestions.</p>
@@ -53,14 +69,14 @@ export const DashboardPage = () => {
               <h3 className="text-lg font-bold text-white mb-4">Employer Core Actions</h3>
               <p className="text-sm text-slate-400 mb-6">Manage job posts and view applicant matches.</p>
               <div className="grid grid-cols-2 gap-4">
-                <button className="p-4 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 rounded-xl text-center transition-all group">
+                <Link to="/employer/jobs/create" className="p-4 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 rounded-xl text-center transition-all block group">
                   <span className="block text-2xl mb-1 text-sky-400">⊕</span>
                   <span className="text-xs font-bold text-white block">Post a Job</span>
-                </button>
-                <button className="p-4 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl text-center transition-all group">
+                </Link>
+                <Link to="/employer/jobs" className="p-4 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl text-center transition-all block group">
                   <span className="block text-2xl mb-1 text-indigo-400">👁</span>
-                  <span className="text-xs font-bold text-white block">Applicants List</span>
-                </button>
+                  <span className="text-xs font-bold text-white block">Manage Listings</span>
+                </Link>
               </div>
             </div>
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
@@ -77,7 +93,7 @@ export const DashboardPage = () => {
                 <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-bold text-white">Bob Smith</h4>
-                    <span className="text-[10px] text-slate-500">Node JS Applicant</span>
+                    <span className="text-[10px] text-slate-550">Node JS Applicant</span>
                   </div>
                   <span className="text-xs font-bold text-amber-400">64% Match</span>
                 </div>

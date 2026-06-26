@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import authRoutes from './modules/auth/routes/auth.routes.js';
 import userRoutes from './modules/users/user.routes.js';
+import { jobRoutes } from './modules/jobs/index.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/health', (req, res) => {
 // Route mounting
 app.use('/api/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/jobs', jobRoutes);
 
 // Global Error Handler Middleware
 app.use((err, req, res, next) => {
