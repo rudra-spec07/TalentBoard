@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const rawApiUrl = (import.meta.env.VITE_API_URL || 'https://talentboard-backend.onrender.com/api').trim();
+const normalizedApiUrl = rawApiUrl.endsWith('/api')
+  ? rawApiUrl.replace(/\/+$/, '')
+  : `${rawApiUrl.replace(/\/+$/, '')}/api`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: normalizedApiUrl,
   headers: {
     'Content-Type': 'application/json',
   },
