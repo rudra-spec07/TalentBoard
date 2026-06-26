@@ -10,8 +10,14 @@ export class JobQueryBuilder {
 
   setKeyword(keyword) {
     if (keyword && keyword.trim()) {
-      // Use text search for full-text capabilities since there is a text index
-      this.filters.$text = { $search: keyword.trim() };
+      // Safe case-insensitive substring match across multiple fields (partial words supported)
+      const escaped = keyword.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = { $regex: escaped, $options: 'i' };
+      this.filters.$or = [
+        { title: regex },
+        { companyName: regex },
+        { description: regex }
+      ];
     }
     return this;
   }

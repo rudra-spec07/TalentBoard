@@ -48,9 +48,15 @@ class JobMongoRepository extends IJobRepository {
       isDeleted: false 
     };
 
-    // Keyword text search
+    // Keyword search (substring match on title, companyName, description)
     if (filters.keyword) {
-      query.$text = { $search: filters.keyword };
+      const escaped = filters.keyword.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = { $regex: escaped, $options: 'i' };
+      query.$or = [
+        { title: regex },
+        { companyName: regex },
+        { description: regex }
+      ];
     }
 
     // Location match

@@ -52,7 +52,7 @@ class JobSearchService {
       .setLocation(params.location)
       .setSkills(params.skills)
       .setSalaryRange(params.salaryMin, params.salaryMax)
-      .setExperience(params.experience)
+      .setExperience(params.experienceLevel)
       .setJobType(params.jobType);
 
     return builder.build();

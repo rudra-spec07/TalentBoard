@@ -137,6 +137,8 @@ export const toSearchJobSummaryDTO = (job) => {
     currency: job.currency || 'USD',
     experienceLevel: job.experienceLevel,
     jobType: job.jobType,
+    skillsRequired: job.skillsRequired || [],
+    applicationDeadline: job.applicationDeadline || null,
     createdAt: job.createdAt
   };
 };

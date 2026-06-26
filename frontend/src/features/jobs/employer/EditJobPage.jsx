@@ -86,6 +86,9 @@ export const EditJobPage = () => {
         vacancies: Number(data.vacancies)
       };
       
+      // Remove status so backend Zod strict check doesn't reject the payload
+      delete cleanData.status;
+      
       await update(jobId, cleanData);
       navigate('/employer/jobs');
     } catch (err) {
