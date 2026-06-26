@@ -22,6 +22,10 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date() });
 });
 
+app.get('/', (req, res) => {
+  res.send('Messmate Backend is up and running! 🚀');
+});
+
 // Route mounting
 app.use('/api/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
