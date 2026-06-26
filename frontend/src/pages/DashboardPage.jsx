@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
 export const DashboardPage = () => {
@@ -108,16 +109,24 @@ export const DashboardPage = () => {
             <span className="font-extrabold text-xl tracking-tight text-white">Dashboard</span>
           </div>
 
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <div className="hidden sm:flex flex-col text-right">
-              <span className="text-sm font-bold text-slate-200">{user?.name}</span>
+              <Link to="/profile" className="text-sm font-bold text-slate-200 hover:text-sky-400 transition-colors">
+                {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.firstName || user?.email || 'User'}
+              </Link>
               <span className="text-[10px] text-sky-400 font-semibold uppercase tracking-wider">
                 {user?.role?.replace('_', ' ')}
               </span>
             </div>
+            <Link
+              to="/profile"
+              className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
+            >
+              Profile
+            </Link>
             <button
               onClick={logout}
-              className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-300 border border-slate-800 rounded-lg transition-all"
+              className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
             >
               Log Out
             </button>
@@ -130,10 +139,20 @@ export const DashboardPage = () => {
         {/* Welcome Card */}
         <div className="bg-gradient-to-r from-sky-500/10 via-indigo-500/5 to-transparent border border-sky-500/10 rounded-3xl p-8 mb-10 relative overflow-hidden">
           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-sky-500/5 blur-3xl rounded-full"></div>
-          <h2 className="text-3xl font-extrabold text-white mb-2">Hello, {user?.name}!</h2>
-          <p className="text-slate-400 text-sm max-w-xl">
-            Welcome to your **TalentBoardX** workspace. Here you can find matching scores, manage configurations, and perform action tasks.
-          </p>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h2 className="text-3xl font-extrabold text-white mb-2">Hello, {user?.firstName || 'User'}!</h2>
+              <p className="text-slate-400 text-sm max-w-xl">
+                Welcome to your **TalentBoardX** workspace. Here you can find matching scores, manage configurations, and perform action tasks.
+              </p>
+            </div>
+            <Link
+              to="/profile"
+              className="self-start md:self-auto px-6 py-3 text-sm font-bold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all duration-300 shrink-0"
+            >
+              Complete Profile Setup
+            </Link>
+          </div>
         </div>
 
         {/* Dynamic Panels */}

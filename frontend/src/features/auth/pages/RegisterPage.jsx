@@ -21,7 +21,8 @@ export const RegisterPage = () => {
   } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       role: 'job_seeker'
@@ -34,7 +35,7 @@ export const RegisterPage = () => {
     setIsSubmitting(true);
     setApiError(null);
     try {
-      await registerUser(data.name, data.email, data.password, data.role);
+      await registerUser(data.firstName, data.lastName, data.email, data.password, data.role);
       setIsSuccess(true);
       setTimeout(() => {
         navigate('/login');
@@ -114,21 +115,40 @@ export const RegisterPage = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  {...register('name')}
-                  className={`w-full px-4 py-2.5 bg-slate-950 border rounded-lg text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 transition-all ${
-                    errors.name ? 'border-rose-500/50' : 'border-slate-800 focus:border-sky-500'
-                  }`}
-                />
-                {errors.name && (
-                  <span className="text-xs text-rose-400 mt-1 block">{errors.name.message}</span>
-                )}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="John"
+                    {...register('firstName')}
+                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-lg text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 transition-all ${
+                      errors.firstName ? 'border-rose-500/50' : 'border-slate-800 focus:border-sky-500'
+                    }`}
+                  />
+                  {errors.firstName && (
+                    <span className="text-xs text-rose-400 mt-1 block">{errors.firstName.message}</span>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Doe"
+                    {...register('lastName')}
+                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-lg text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 transition-all ${
+                      errors.lastName ? 'border-rose-500/50' : 'border-slate-800 focus:border-sky-500'
+                    }`}
+                  />
+                  {errors.lastName && (
+                    <span className="text-xs text-rose-400 mt-1 block">{errors.lastName.message}</span>
+                  )}
+                </div>
               </div>
 
               <div>

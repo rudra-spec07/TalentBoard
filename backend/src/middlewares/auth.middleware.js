@@ -1,10 +1,7 @@
-const jwt = require('jsonwebtoken');
-const userRepository = require('../modules/auth/repository/user.repository');
-const { UnauthorizedError } = require('../utils/errors');
+import jwt from 'jsonwebtoken';
+import userRepository from '../modules/auth/repository/user.repository.js';
+import { UnauthorizedError } from '../utils/errors.js';
 
-/**
- * Authenticates user requests by validating JWT tokens.
- */
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -22,22 +19,22 @@ const authMiddleware = async (req, res, next) => {
       throw new UnauthorizedError('Invalid or expired authentication token.');
     }
 
-    // Retrieve user and check status
     const user = await userRepository.findById(decoded.id);
     if (!user) {
       throw new UnauthorizedError('User associated with this token no longer exists.');
     }
 
-    if (user.status !== 'active') {
-      throw new UnauthorizedError('Your account is currently suspended.');
+    // Verify account active status
+    if (user.isActive === false) {
+      throw new UnauthorizedError('Your account has been deactivated.');
     }
 
-    // Attach user information to request
     req.user = {
       id: user._id.toString(),
       email: user.email,
       role: user.role,
-      name: user.name
+      firstName: user.firstName,
+      lastName: user.lastName
     };
 
     next();
@@ -46,4 +43,4 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;

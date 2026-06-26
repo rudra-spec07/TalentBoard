@@ -1,4 +1,4 @@
-const authService = require('../service/auth.service');
+import authService from '../service/auth.service.js';
 
 class AuthController {
   /**
@@ -42,7 +42,6 @@ class AuthController {
    */
   async getCurrentUser(req, res, next) {
     try {
-      // req.user is populated by authMiddleware
       res.status(200).json({
         success: true,
         data: {
@@ -55,4 +54,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+export default new AuthController();

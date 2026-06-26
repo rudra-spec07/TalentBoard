@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './features/profile/pages/ProfilePage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           {/* Protected Routes (Redirects to login if not logged in) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           {/* Catch-all fallback redirect */}

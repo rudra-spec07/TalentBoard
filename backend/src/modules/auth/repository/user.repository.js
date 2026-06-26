@@ -1,4 +1,4 @@
-const User = require('../models/user.model');
+import User from '../models/user.model.js';
 
 class UserRepository {
   /**
@@ -44,7 +44,7 @@ class UserRepository {
   }
 
   /**
-   * Delete a user by ID
+   * Delete a user by ID (physical delete - not used for profiles)
    * @param {string} id 
    * @returns {Promise<Object|null>} The deleted user document
    */
@@ -53,4 +53,4 @@ class UserRepository {
   }
 }
 
-module.exports = new UserRepository();
+export default new UserRepository();

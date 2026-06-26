@@ -73,11 +73,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register a new user
-  const register = async (name, email, password, role) => {
+  const register = async (firstName, lastName, email, password, role) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await registerRequest({ name, email, password, role });
+      const response = await registerRequest({ firstName, lastName, email, password, role });
       setIsLoading(false);
       return response.data;
     } catch (err) {

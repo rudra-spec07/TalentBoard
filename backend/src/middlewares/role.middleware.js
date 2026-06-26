@@ -1,9 +1,5 @@
-const { ForbiddenError } = require('../utils/errors');
+import { ForbiddenError } from '../utils/errors.js';
 
-/**
- * Restricts access to user roles.
- * @param {...string} allowedRoles Roles that are permitted to access the resource
- */
 const authorize = (...allowedRoles) => {
   return (req, res, next) => {
     try {
@@ -22,4 +18,4 @@ const authorize = (...allowedRoles) => {
   };
 };
 
-module.exports = authorize;
+export default authorize;

@@ -1,12 +1,42 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const User = require('../modules/auth/models/user.model');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import User from '../modules/auth/models/user.model.js';
 
 const connectDB = async () => {
   try {
     const connStr = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/talentboardx';
     const conn = await mongoose.connect(connStr);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+
+    // Run database schema migration for legacy users (Phase 1 -> Phase 2 compatibility)
+    const usersCollection = mongoose.connection.db.collection('users');
+    const legacyUsers = await usersCollection.find({ name: { $exists: true } }).toArray();
+    
+    if (legacyUsers.length > 0) {
+      console.log(`[MIGRATION] Found ${legacyUsers.length} legacy user records to migrate...`);
+      for (const legacyUser of legacyUsers) {
+        const rawName = (legacyUser.name || '').trim();
+        const nameParts = rawName.split(/\s+/);
+        const firstName = nameParts[0] || 'User';
+        const lastName = nameParts.slice(1).join(' ') || 'User';
+        
+        await usersCollection.updateOne(
+          { _id: legacyUser._id },
+          {
+            $set: {
+              firstName,
+              lastName,
+              isActive: legacyUser.status === 'active' || legacyUser.isActive !== false
+            },
+            $unset: {
+              name: '',
+              status: ''
+            }
+          }
+        );
+        console.log(`[MIGRATION] Successfully migrated legacy account: ${legacyUser.email} (${firstName} ${lastName})`);
+      }
+    }
 
     // Seed default admin account if configured in env
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -17,11 +47,13 @@ const connectDB = async () => {
       if (!existingAdmin) {
         const hashedPassword = await bcrypt.hash(adminPassword, 10);
         await User.create({
-          name: 'System Administrator',
+          firstName: 'System',
+          lastName: 'Administrator',
           email: adminEmail,
           password: hashedPassword,
           role: 'admin',
-          status: 'active'
+          isActive: true,
+          isVerified: true
         });
         console.log(`[SEED] Default Admin account seeded successfully (${adminEmail})`);
       } else {
@@ -34,4 +66,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

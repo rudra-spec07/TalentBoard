@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const userRepository = require('../repository/user.repository');
-const { ConflictError, UnauthorizedError } = require('../../../utils/errors');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import userRepository from '../repository/user.repository.js';
+import { ConflictError, UnauthorizedError } from '../../../utils/errors.js';
 
 class AuthService {
   /**
@@ -10,7 +10,7 @@ class AuthService {
    * @returns {Promise<Object>} User details (excluding password)
    */
   async register(userData) {
-    const { name, email, password, role } = userData;
+    const { firstName, lastName, email, password, role } = userData;
 
     // Check if user already exists
     const existingUser = await userRepository.findByEmail(email);
@@ -24,19 +24,23 @@ class AuthService {
 
     // Save user
     const newUser = await userRepository.create({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
-      role: role || 'job_seeker'
+      role: role || 'job_seeker',
+      isActive: true,
+      isVerified: false
     });
 
-    // Format response DTO
+    // Format response
     return {
       id: newUser._id,
-      name: newUser.name,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: newUser.email,
       role: newUser.role,
-      status: newUser.status,
+      isActive: newUser.isActive,
       createdAt: newUser.createdAt
     };
   }
@@ -50,18 +54,22 @@ class AuthService {
   async login(email, password) {
     const user = await userRepository.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedError('No user found with this email. Please sign up first.');
+      throw new UnauthorizedError('Invalid email or password');
     }
 
-    if (user.status !== 'active') {
-      throw new UnauthorizedError('Your account is currently suspended. Please contact support.');
+    if (user.isActive === false) {
+      throw new UnauthorizedError('Your account has been deactivated.');
     }
 
     // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedError('Wrong password. Please try again.');
+      throw new UnauthorizedError('Invalid email or password');
     }
+
+    // Update last login timestamp
+    user.lastLogin = new Date();
+    await user.save();
 
     // Generate token
     const token = this.generateToken(user);
@@ -69,10 +77,11 @@ class AuthService {
     return {
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
-        status: user.status
+        isActive: user.isActive
       },
       token
     };
@@ -98,4 +107,4 @@ class AuthService {
   }
 }
 
-module.exports = new AuthService();
+export default new AuthService();

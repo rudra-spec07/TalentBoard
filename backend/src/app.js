@@ -1,6 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import authRoutes from './modules/auth/routes/auth.routes.js';
+import userRoutes from './modules/users/user.routes.js';
 
 const app = express();
 
@@ -20,24 +22,44 @@ app.get('/health', (req, res) => {
 });
 
 // Route mounting
-const authRoutes = require('./modules/auth/routes/auth.routes');
 app.use('/api/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 // Global Error Handler Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  
+  let statusCode = err.statusCode || 500;
+  let message = err.message || 'Internal Server Error';
+  let errors = err.details || [message];
+
+  // Map Mongoose Validation exceptions
+  if (err.name === 'ValidationError') {
+    statusCode = 400;
+    message = 'Validation failed';
+    errors = Object.values(err.errors).map(e => ({
+      field: e.path,
+      message: e.message
+    }));
+  } 
+  // Map MongoDB Duplicate Key conflicts
+  else if (err.code === 11000) {
+    statusCode = 409;
+    message = 'Conflict: Duplicate resource';
+    errors = ['A resource with this key already exists'];
+  } 
+  // Map Mongoose CastExceptions (e.g. invalid Hex ID format)
+  else if (err.name === 'CastError') {
+    statusCode = 400;
+    message = `Invalid format for field ${err.path}`;
+    errors = [message];
+  }
+
   res.status(statusCode).json({
     success: false,
-    error: {
-      message,
-      status: statusCode,
-      details: err.details || null
-    }
+    message,
+    errors
   });
 });
 
-module.exports = app;
+export default app;

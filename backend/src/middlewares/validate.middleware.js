@@ -1,9 +1,5 @@
-const { BadRequestError } = require('../utils/errors');
+import { BadRequestError } from '../utils/errors.js';
 
-/**
- * Express middleware to validate request body using a Zod schema.
- * @param {import('zod').ZodSchema} schema 
- */
 const validate = (schema) => (req, res, next) => {
   try {
     req.body = schema.parse(req.body);
@@ -20,4 +16,4 @@ const validate = (schema) => (req, res, next) => {
   }
 };
 
-module.exports = validate;
+export default validate;

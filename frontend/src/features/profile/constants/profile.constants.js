@@ -1,0 +1,8 @@
+export const PROFILE_LIMITS = {
+  HEADLINE_MAX: 100,
+  BIO_MAX: 1000,
+  SKILLS_MAX: 20,
+  MAX_FILE_SIZE_MB: 5,
+  MAX_FILE_SIZE_BYTES: 5 * 1024 * 1024,
+  ALLOWED_FILE_TYPES: ['application/pdf']
+};
