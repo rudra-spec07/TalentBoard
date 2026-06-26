@@ -1,0 +1,34 @@
+const { z } = require('zod');
+
+const registerSchema = z.object({
+  name: z.string({
+    required_error: 'Name is required'
+  }).min(2, 'Name must be at least 2 characters').max(50, 'Name cannot exceed 50 characters').trim(),
+  
+  email: z.string({
+    required_error: 'Email is required'
+  }).email('Please enter a valid email address').trim().toLowerCase(),
+  
+  password: z.string({
+    required_error: 'Password is required'
+  }).min(6, 'Password must be at least 6 characters').max(100, 'Password cannot exceed 100 characters'),
+  
+  role: z.enum(['job_seeker', 'employer', 'admin'], {
+    invalid_type_error: 'Role must be one of: job_seeker, employer, admin'
+  }).optional()
+});
+
+const loginSchema = z.object({
+  email: z.string({
+    required_error: 'Email is required'
+  }).email('Please enter a valid email address').trim().toLowerCase(),
+  
+  password: z.string({
+    required_error: 'Password is required'
+  })
+});
+
+module.exports = {
+  registerSchema,
+  loginSchema
+};
