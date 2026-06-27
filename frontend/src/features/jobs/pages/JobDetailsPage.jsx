@@ -16,7 +16,7 @@ export const JobDetailsPage = () => {
   const [isApplyOpen, setIsApplyOpen] = useState(false);
 
   // Fetch applicant's existing submissions to check for duplicates
-  const { data: appsData } = useApplications(user?.role === 'job_seeker' ? {} : null);
+  const { data: appsData, refetch: refetchApps } = useApplications(user?.role === 'job_seeker' ? {} : null);
   const hasApplied = appsData?.data?.items?.some(app => app.jobId === jobId && !app.withdrawn) || false;
 
   const handleApplyClick = () => {
@@ -150,6 +150,7 @@ export const JobDetailsPage = () => {
           user={user}
           hasApplied={hasApplied}
           onClose={() => setIsApplyOpen(false)}
+          onSuccess={refetchApps}
         />
       )}
     </div>
