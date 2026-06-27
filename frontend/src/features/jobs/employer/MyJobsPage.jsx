@@ -91,17 +91,17 @@ export const MyJobsPage = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans w-full pb-20 text-left">
       {/* Header */}
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur px-6 py-4 w-full sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex items-center space-x-3">
             <Link to="/dashboard" className="p-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 rounded-xl text-slate-400 hover:text-white transition-colors mr-1">
               <FiArrowLeft className="w-4 h-4" />
             </Link>
-            <span className="font-extrabold text-xl tracking-tight text-white">
+            <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white">
               {isSystemAdmin ? 'Admin Control Center' : 'Employer Dashboard'}
             </span>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 w-full sm:w-auto justify-end sm:justify-start">
             <Link 
               to="/employer/jobs/create" 
               className="px-4 py-2 text-xs font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg flex items-center space-x-1.5 transition-all shadow-md shadow-sky-500/10"
@@ -127,7 +127,7 @@ export const MyJobsPage = () => {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center space-x-4">
             <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400">
               <FiLayers className="w-5 h-5" />

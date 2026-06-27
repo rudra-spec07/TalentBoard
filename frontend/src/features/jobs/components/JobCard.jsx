@@ -135,7 +135,7 @@ export const JobCard = ({
             </div>
 
             {/* Admin/Employer quick actions */}
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0 justify-end">
               {job.status === JOB_STATUS.DRAFT && onPublish && (
                 <button
                   onClick={() => onPublish(job.id)}

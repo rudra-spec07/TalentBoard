@@ -251,16 +251,16 @@ export const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans w-full">
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur px-6 py-4 w-full">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur px-4 sm:px-6 py-3 sm:py-4 w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow">
-              <span className="text-white font-bold text-md">X</span>
+              <span className="text-white font-bold text-sm sm:text-md">X</span>
             </div>
-            <span className="font-extrabold text-xl tracking-tight text-white">Dashboard</span>
+            <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white">Dashboard</span>
           </div>
 
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
             <div className="hidden sm:flex flex-col text-right">
               <Link to="/profile" className="text-sm font-bold text-slate-200 hover:text-sky-400 transition-colors">
                 {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.firstName || user?.email || 'User'}
@@ -271,13 +271,13 @@ export const DashboardPage = () => {
             </div>
             <Link
               to="/profile"
-              className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
+              className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
             >
               Profile
             </Link>
             <button
               onClick={logout}
-              className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
+              className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold bg-slate-900 hover:bg-slate-850 hover:text-white text-slate-300 border border-slate-800 rounded-lg transition-all"
             >
               Log Out
             </button>
