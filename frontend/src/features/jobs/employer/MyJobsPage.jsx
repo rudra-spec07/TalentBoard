@@ -6,11 +6,14 @@ import useUpdateJob from '../hooks/useUpdateJob';
 import useDeleteJob from '../hooks/useDeleteJob';
 import JobList from '../components/JobList';
 import { JOB_STATUS } from '../constants/job.constants';
+import useAuth from '../../../hooks/useAuth';
 
 export const MyJobsPage = () => {
   const { jobs, loading, error, refetch } = useEmployerJobs();
   const { publish, close, reopen, isSubmitting: isUpdating } = useUpdateJob();
   const { remove } = useDeleteJob();
+  const { user } = useAuth();
+  const isSystemAdmin = user?.role === 'admin';
 
   // Reopen Modal state
   const [reopenJobId, setReopenJobId] = useState(null);
@@ -93,7 +96,9 @@ export const MyJobsPage = () => {
             <Link to="/dashboard" className="p-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 rounded-xl text-slate-400 hover:text-white transition-colors mr-1">
               <FiArrowLeft className="w-4 h-4" />
             </Link>
-            <span className="font-extrabold text-xl tracking-tight text-white">Employer Dashboard</span>
+            <span className="font-extrabold text-xl tracking-tight text-white">
+              {isSystemAdmin ? 'Admin Control Center' : 'Employer Dashboard'}
+            </span>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -111,8 +116,14 @@ export const MyJobsPage = () => {
       <main className="max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
         {/* Title row */}
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">My Job Postings</h1>
-          <p className="text-sm text-slate-400 mt-1">Manage and audit your company listings, publish drafts, and track applicants.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            {isSystemAdmin ? 'All Platform Postings' : 'My Job Postings'}
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            {isSystemAdmin 
+              ? 'Manage and audit all platform listings, publish drafts, and track applicants.' 
+              : 'Manage and audit your company listings, publish drafts, and track applicants.'}
+          </p>
         </div>
 
         {/* Metrics Grid */}

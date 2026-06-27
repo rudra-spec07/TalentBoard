@@ -7,10 +7,12 @@ import useJob from '../hooks/useJob';
 import useUpdateJob from '../hooks/useUpdateJob';
 import JobForm from '../components/JobForm';
 import { updateJobSchema } from '../validation/job.schema';
+import useAuth from '../../../hooks/useAuth';
 
 export const EditJobPage = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { job, loading: isJobLoading, error: jobError, refetch } = useJob(jobId);
   const { update, isSubmitting: isApiSubmitting } = useUpdateJob();
   const [submitError, setSubmitError] = useState(null);
@@ -90,7 +92,7 @@ export const EditJobPage = () => {
       delete cleanData.status;
       
       await update(jobId, cleanData);
-      navigate('/employer/jobs');
+      navigate(user?.role === 'admin' ? '/dashboard' : '/employer/jobs');
     } catch (err) {
       setSubmitError(err.message || 'An error occurred while updating the job listing.');
     }

@@ -12,6 +12,7 @@ import ProfilePage from './features/profile/pages/ProfilePage';
 
 // Jobs module routes
 import { getJobRoutes } from './features/jobs';
+import { getApplicationRoutes } from './features/applications';
 
 function App() {
   return (
@@ -35,6 +36,9 @@ function App() {
 
           {/* Jobs Module Routes (Seeker public + Protected Employer) */}
           {getJobRoutes()}
+
+          {/* Applications Module Routes */}
+          {getApplicationRoutes()}
 
           {/* Catch-all fallback redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />

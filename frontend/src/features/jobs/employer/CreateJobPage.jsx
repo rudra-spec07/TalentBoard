@@ -7,10 +7,12 @@ import useCreateJob from '../hooks/useCreateJob';
 import JobForm from '../components/JobForm';
 import { createJobSchema } from '../validation/job.schema';
 import { JOB_STATUS } from '../constants/job.constants';
+import useAuth from '../../../hooks/useAuth';
 
 export const CreateJobPage = () => {
   const navigate = useNavigate();
   const { create, isSubmitting: isApiSubmitting } = useCreateJob();
+  const { user } = useAuth();
   const [submitError, setSubmitError] = useState(null);
 
   const tomorrow = new Date();
@@ -50,7 +52,7 @@ export const CreateJobPage = () => {
     setSubmitError(null);
     try {
       await create(data);
-      navigate('/employer/jobs');
+      navigate(user?.role === 'admin' ? '/dashboard' : '/employer/jobs');
     } catch (err) {
       setSubmitError(err.message || 'An error occurred while creating the job listing.');
     }

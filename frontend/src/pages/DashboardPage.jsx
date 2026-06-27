@@ -1,8 +1,45 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import api from '../api/axios';
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
+  const [adminJobs, setAdminJobs] = useState([]);
+  const [loadingAdminJobs, setLoadingAdminJobs] = useState(false);
+  const [errorAdminJobs, setErrorAdminJobs] = useState(null);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      const fetchAdminJobs = async () => {
+        setLoadingAdminJobs(true);
+        setErrorAdminJobs(null);
+        try {
+          const response = await api.get('/v1/jobs/admin');
+          if (response.data && response.data.success) {
+            setAdminJobs(response.data.data.items || []);
+          }
+        } catch (err) {
+          console.error(err);
+          setErrorAdminJobs('Failed to retrieve system job audit list.');
+        } finally {
+          setLoadingAdminJobs(false);
+        }
+      };
+      fetchAdminJobs();
+    }
+  }, [user]);
+
+  const handleDeleteJob = async (jobId) => {
+    if (!window.confirm('Are you sure you want to delete this job listing globally?')) return;
+    try {
+      await api.delete(`/v1/jobs/${jobId}`);
+      setAdminJobs(prev => prev.filter(j => j.id !== jobId));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete job listing.');
+    }
+  };
 
   const renderRoleDashboard = () => {
     switch (user?.role) {
@@ -36,29 +73,17 @@ export const DashboardPage = () => {
               </Link>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">My Applications History</h3>
-              <p className="text-sm text-slate-400 mb-6">Track matching score outcomes and suggestions.</p>
-              <div className="space-y-3">
-                <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Senior Backend Dev</h4>
-                    <span className="text-[10px] text-slate-500">Google Ltd.</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-emerald-400 px-2 py-0.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">85% Match</span>
-                  </div>
-                </div>
-                <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Full-Stack Engineer</h4>
-                    <span className="text-[10px] text-slate-500">TalentBoardX Inc.</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-sky-400 px-2 py-0.5 bg-sky-500/10 rounded-full border border-sky-500/20">72% Match</span>
-                  </div>
-                </div>
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">My Applications History</h3>
+                <p className="text-sm text-slate-400">Track and manage your active application progress, interview schedules, and hiring outcomes.</p>
               </div>
+              <Link 
+                to="/applications" 
+                className="w-full py-3 bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold rounded-xl border border-slate-750 text-center transition-all block mt-6"
+              >
+                View Applications History
+              </Link>
             </div>
           </div>
         );
@@ -101,12 +126,122 @@ export const DashboardPage = () => {
             </div>
           </div>
         );
+      case 'admin':
+        return (
+          <div className="space-y-8 text-left">
+            {/* Header banner with Post a Job action */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 rounded-3xl p-6">
+              <div>
+                <h2 className="text-xl font-bold text-white">System Admin Control Center</h2>
+                <p className="text-xs text-slate-400 mt-1">Audit platform postings, manage connections, and post new listings.</p>
+              </div>
+              <Link 
+                to="/employer/jobs/create" 
+                className="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all flex items-center gap-1.5"
+              >
+                <span>➕</span>
+                <span>Post a Job</span>
+              </Link>
+            </div>
+
+            {/* Stats Summary cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Postings</span>
+                <span className="text-2xl font-extrabold text-white">{adminJobs.length}</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Active Open</span>
+                <span className="text-2xl font-extrabold text-emerald-400">{adminJobs.filter(j => j.status === 'open').length}</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Draft Listings</span>
+                <span className="text-2xl font-extrabold text-amber-400">{adminJobs.filter(j => j.status === 'draft').length}</span>
+              </div>
+            </div>
+
+            {/* Global listings audit */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-white">Global Job Listings Audit</h3>
+                <p className="text-xs text-slate-400 mt-1">Moderate job postings, view candidates, edit or delete listings globally.</p>
+              </div>
+
+              {loadingAdminJobs ? (
+                <div className="space-y-3 animate-pulse">
+                  <div className="h-10 bg-slate-800 rounded-xl w-full"></div>
+                  <div className="h-10 bg-slate-800 rounded-xl w-full"></div>
+                </div>
+              ) : errorAdminJobs ? (
+                <div className="text-rose-400 text-sm p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl">{errorAdminJobs}</div>
+              ) : adminJobs.length === 0 ? (
+                <div className="text-slate-550 text-xs italic py-4 text-center">No postings exist on the platform.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-800 text-slate-500 font-bold uppercase tracking-wider">
+                        <th className="pb-3 pr-4">Job Title</th>
+                        <th className="pb-3 px-4">Company</th>
+                        <th className="pb-3 px-4">Status</th>
+                        <th className="pb-3 px-4">Applicants</th>
+                        <th className="pb-3 pl-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {adminJobs.map((job) => (
+                        <tr key={job.id} className="hover:bg-slate-850/30 transition-colors">
+                          <td className="py-4 pr-4 font-bold text-slate-200">{job.title}</td>
+                          <td className="py-4 px-4 text-slate-400">{job.companyName}</td>
+                          <td className="py-4 px-4">
+                            <span className={`px-2 py-0.5 font-bold rounded-full text-[10px] border ${
+                              job.status === 'open' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                              job.status === 'draft' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                              'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                            }`}>
+                              {job.status}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 text-slate-350">{job.totalApplications || 0}</td>
+                          <td className="py-4 pl-4 text-right space-x-2 whitespace-nowrap">
+                            <Link
+                              to={`/employer/jobs/${job.id}/applicants`}
+                              className="px-2.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-400 rounded-lg font-bold"
+                            >
+                              Applicants
+                            </Link>
+                            <Link
+                              to={`/employer/jobs/${job.id}/edit`}
+                              className="px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-850 text-slate-300 rounded-lg font-bold"
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteJob(job.id)}
+                              className="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-450 rounded-lg font-bold"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        );
       default:
         return (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
-            <h3 className="text-xl font-bold text-white mb-2">Welcome, System Admin</h3>
-            <p className="text-slate-400 text-sm max-w-lg mx-auto">
-              You possess global access privileges. Moderate job listings, audit users accounts, and manage database connection settings from the admin panel.
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center max-w-md mx-auto space-y-4">
+            <svg className="w-12 h-12 text-rose-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h3 className="text-lg font-bold text-white">Access Denied</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              You do not have the credentials required to view this dashboard workspace. Please contact system support.
             </p>
           </div>
         );

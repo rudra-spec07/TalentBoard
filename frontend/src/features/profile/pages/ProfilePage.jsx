@@ -18,7 +18,7 @@ import { FiArrowLeft, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, refreshUser } = useAuth();
   const {
     profile,
     loading,
@@ -69,6 +69,7 @@ export const ProfilePage = () => {
   const onSubmit = async (data) => {
     try {
       await updateProfile(data);
+      await refreshUser();
       triggerToast('Profile updated successfully!', 'success');
     } catch (err) {
       triggerToast(err.message || 'Failed to update profile.', 'error');
@@ -78,6 +79,7 @@ export const ProfilePage = () => {
   const handleResumeUpload = async (file, onProgress) => {
     try {
       await uploadResume(file, onProgress);
+      await refreshUser();
       triggerToast('Resume uploaded successfully!', 'success');
     } catch (err) {
       triggerToast(err.message || 'Resume upload failed.', 'error');

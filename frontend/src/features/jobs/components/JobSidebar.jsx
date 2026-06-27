@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiDollarSign, FiClock, FiUsers, FiMail, FiLayers } from 'react-icons/fi';
 
-export const JobSidebar = ({ job }) => {
+export const JobSidebar = ({ job, user, hasApplied, onApply }) => {
   if (!job) return null;
 
   const formattedDeadline = job.applicationDeadline 
@@ -29,6 +30,8 @@ export const JobSidebar = ({ job }) => {
   const postedByName = job.postedBy?.firstName 
     ? `${job.postedBy.firstName} ${job.postedBy.lastName || ''}` 
     : 'Platform Employer';
+
+  const postedById = job.postedBy?._id || job.postedBy;
 
   return (
     <div className="space-y-6 w-full text-left">
@@ -74,14 +77,38 @@ export const JobSidebar = ({ job }) => {
           </div>
         </div>
         
-        {/* Placeholder Apply Button */}
+        {/* Actions Button */}
         <div className="pt-2">
-          <button 
-            type="button"
-            className="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all duration-350"
-          >
-            Apply for this Job
-          </button>
+          {(!user || user.role === 'job_seeker') ? (
+            hasApplied ? (
+              <button 
+                type="button"
+                disabled
+                className="w-full py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 font-bold rounded-xl cursor-not-allowed text-center text-sm"
+              >
+                ✓ Already Applied
+              </button>
+            ) : (
+              <button 
+                type="button"
+                onClick={onApply}
+                className="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all duration-350"
+              >
+                Apply for this Job
+              </button>
+            )
+          ) : (user.role === 'employer' && postedById === user.id) ? (
+            <Link
+              to={`/employer/jobs/${job.id}/applicants`}
+              className="w-full py-3 bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold rounded-xl border border-slate-750 text-center transition-all block"
+            >
+              Manage Applicants
+            </Link>
+          ) : (
+            <div className="text-center text-xs text-slate-500 italic py-2">
+              Viewing as Employer
+            </div>
+          )}
         </div>
       </div>
 

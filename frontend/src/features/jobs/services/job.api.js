@@ -62,3 +62,10 @@ export const deleteJob = async (id) => {
 export const getEmployerJobs = async (params = {}) => {
   return await api.get('/v1/jobs/my', { params });
 };
+
+/**
+ * Retrieve all job listings on the platform for admin auditing
+ */
+export const getAdminJobs = async (params = {}) => {
+  return await api.get('/v1/jobs/admin', { params });
+};

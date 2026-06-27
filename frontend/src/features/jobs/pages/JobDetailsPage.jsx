@@ -1,14 +1,31 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
 import useJob from '../hooks/useJob';
 import JobHeader from '../components/JobHeader';
 import JobSidebar from '../components/JobSidebar';
 import ErrorState from '../components/ErrorState';
+import useAuth from '../../../hooks/useAuth';
+import { ApplyModal, useApplications } from '../../applications';
 
 export const JobDetailsPage = () => {
   const { jobId } = useParams();
   const { job, loading, error, refetch } = useJob(jobId);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
+
+  // Fetch applicant's existing submissions to check for duplicates
+  const { data: appsData } = useApplications(user?.role === 'job_seeker' ? {} : null);
+  const hasApplied = appsData?.data?.items?.some(app => app.jobId === jobId && !app.withdrawn) || false;
+
+  const handleApplyClick = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setIsApplyOpen(true);
+  };
 
   if (loading) {
     return (
@@ -122,10 +139,19 @@ export const JobDetailsPage = () => {
 
           {/* Quick Stats Sidebar (Right) */}
           <div className="lg:col-span-1">
-            <JobSidebar job={job} />
+            <JobSidebar job={job} user={user} hasApplied={hasApplied} onApply={handleApplyClick} />
           </div>
         </div>
       </div>
+
+      {isApplyOpen && (
+        <ApplyModal
+          job={job}
+          user={user}
+          hasApplied={hasApplied}
+          onClose={() => setIsApplyOpen(false)}
+        />
+      )}
     </div>
   );
 };

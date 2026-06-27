@@ -15,7 +15,7 @@ export const getJobRoutes = () => {
       <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
 
       {/* Protected Employer Job Management */}
-      <Route element={<ProtectedRoute allowedRoles={['employer']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['employer', 'admin']} />}>
         <Route path="/employer/jobs" element={<MyJobsPage />} />
         <Route path="/employer/jobs/create" element={<CreateJobPage />} />
         <Route path="/employer/jobs/:jobId/edit" element={<EditJobPage />} />

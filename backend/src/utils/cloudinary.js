@@ -29,7 +29,7 @@ export const uploadBuffer = (fileBuffer, folder = 'talentboardx/resumes') => {
     // If not configured, fall back to returning a mock URL for testing
     if (!isConfigured) {
       console.log('[CLOUDINARY] (Mock) Mocking upload of buffer file to folder:', folder);
-      return resolve('https://res.cloudinary.com/demo/image/upload/v1700000000/mock_talentboardx_resume.pdf');
+      return resolve('https://res.cloudinary.com/demo/image/upload/sample.pdf');
     }
 
     const uploadStream = cloudinary.uploader.upload_stream(

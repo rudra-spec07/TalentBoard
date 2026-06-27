@@ -10,7 +10,8 @@ import {
   FiXCircle, 
   FiTrash2, 
   FiCheckCircle, 
-  FiRefreshCw 
+  FiRefreshCw,
+  FiUsers
 } from 'react-icons/fi';
 import JobStatusBadge from './JobStatusBadge';
 import { JOB_STATUS, JOB_TYPE_LABELS, EXPERIENCE_LEVEL_LABELS } from '../constants/job.constants';
@@ -162,6 +163,13 @@ export const JobCard = ({
                   <span>Reopen</span>
                 </button>
               )}
+              <Link
+                to={`/employer/jobs/${job.id}/applicants`}
+                className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 text-sky-400 rounded-lg flex items-center justify-center space-x-1.5 transition-colors"
+              >
+                <FiUsers className="w-3.5 h-3.5" />
+                <span>Applicants</span>
+              </Link>
               <Link
                 to={`/employer/jobs/${job.id}/edit`}
                 className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-bold bg-slate-950 hover:bg-slate-900 border border-slate-850 text-slate-350 rounded-lg flex items-center justify-center space-x-1.5 transition-all"

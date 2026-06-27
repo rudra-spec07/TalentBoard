@@ -93,6 +93,20 @@ export const AuthProvider = ({ children }) => {
     handlePurge();
   };
 
+  // Re-sync user details dynamically
+  const refreshUser = async () => {
+    if (token) {
+      try {
+        const response = await getMeRequest();
+        if (response.data && response.data.success) {
+          setUser(response.data.data.user);
+        }
+      } catch (err) {
+        console.error('Failed to sync auth user:', err.message);
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -104,7 +118,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        setError
+        setError,
+        refreshUser
       }}
     >
       {children}
